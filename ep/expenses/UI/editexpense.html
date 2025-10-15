@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+
+  <!-- Edit Expense Card -->
+  <div class="modal-dialog">
+    <div class="modal-content" style="background-color: #ffeaf4;">
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" style="color: #b35f82;">Edit Expense</h5>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" name="amount" step="0.01" class="form-control" value="{{ rowid.expense_amount }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select name="category" class="form-control text-dark" required>
+              {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if cat.id == rowid.category.id %}selected{% endif %}>{{ cat.category_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" name="description" value="{{ rowid.expense_description }}" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" name="date" value="{{ rowid.expense_date }}" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn" style="background-color: #fcd6e5; color: #7a2f4b;">Save Changes</button>
+          <a href="{% url 'homepage' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

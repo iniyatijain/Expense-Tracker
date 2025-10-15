@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#budgetModal">
+        💰 Manage Budget
+    </button>
+
+    
+    <h4>Planned amount: ₹{{ budgetvalue.planned_amount }}</h4>
+    <h4>Total spent: ₹{{ total_spent }}</h4>
+    <a href="#" class="btn btn-outline-danger">📊 View Stats</a>
+</div>
+
+
+<div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'budget' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 style="background-color: pink;" class="modal-title" id="budgetModalLabel">Set Budget</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="monthlyIncome" class="form-label">Monthly Income</label>
+                        <input type="number" class="form-control" id="budget_amount" name="budget_amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="plannedAmount" class="form-label">Planned Amount to Spend</label>
+                        <input type="number" class="form-control" id="planned_amount" name="planned_amount" required>
+                    </div>
+                    <input type="hidden" name="month" value="{{ curr_month }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Budget</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Expense Table -->
+<div class="card shadow-sm mb-5">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Expenses in {{ curr_month }}</h5>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-danger">
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in viewexpense %}
+                    <tr>
+                        <td>{{ expense.expense_date }}</td>
+                        <td>₹{{ expense.expense_amount }}</td>
+                        <td>{{ expense.category }}</td>
+                        <td>{{ expense.expense_description }}</td>
+                        <td>
+                            <a href="{% url 'editexpense' expense.id %}" class="text-primary">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'deleteexpense' expense.id %}" class="text-danger">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No expenses found for this month.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Expense Button -->
+<a href="{% url 'addexpensepage' %}" class="btn btn-danger rounded-circle position-fixed" 
+   style="bottom: 80px; right: 30px; width: 60px; height: 60px; font-size: 24px;">
+    +
+</a>
+
+<!-- Month Navigation Bar -->
+
+<div class="fixed-bottom">
+  <ul class="nav justify-content-center custom-month-nav">
+    {% for month in month_list %}
+      <li class="nav-item">
+        <a class="nav-link {% if month == current_month %}active{% endif %}"
+           href="{% url 'homepage' %}?month={{ month }}">
+          {{ month|upper }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

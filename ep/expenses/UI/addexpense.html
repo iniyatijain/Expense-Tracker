@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+
+<!-- Modal -->
+<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #ffeaf4;">
+            <form method="post" action="{% url 'addexpense' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addExpenseLabel" style="color: #b35f82;">Add New Expense</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" name="amount" step="0.01" required class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select name="category" required class="form-control text-dark">
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" name="description" required class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" name="date" required class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn" style="background-color: #fcd6e5; color: #7a2f4b;">Add Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const myModal = new bootstrap.Modal(document.getElementById('addExpenseModal'));
+        myModal.show();
+
+        const modalElement = document.getElementById('addExpenseModal');
+
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            window.location.href = "{% url 'homepage' %}";
+        });
+    });
+</script>
+{% endblock %}
